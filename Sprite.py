@@ -4,7 +4,6 @@ import glob
 class Sprite(pygame.sprite.Sprite):
     """
     :param id: correspond au sprite dans le dictionnaire 'SPRITES'
-    :param img: correpond au chemin relatif de l'image
     """
 
     def __init__(self, id):
