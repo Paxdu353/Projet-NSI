@@ -12,7 +12,7 @@ class Sprite(pygame.sprite.Sprite):
             self.filename = glob.glob(f'sprites/*_Capa-{id}.png')[0]
             self.image = pygame.image.load(self.filename).convert_alpha()
         except IndexError:
-            raise IndexError('Le sprite n\'existe pas')
+            raise IndexError(f'Le sprite {id} n\'existe pas')
 
         self.id = id
         self.rect = self.image.get_rect()
