@@ -1,6 +1,6 @@
 import pygame
 
-class Block :
+class Block:
 
     def __init__(self, x, y, sprite, crossable = True):
         self.x = x
@@ -12,8 +12,11 @@ class Block :
     def draw(self, screen, scroll):
         self.hitbox.x = self.x - scroll[0]
         self.hitbox.y = self.y - scroll[1]
-        if 0 <= self.hitbox.x < screen.get_width() and 0 <= self.hitbox.y < screen.get_height() :
-            screen.blit(self.sprite.image, self.hitbox)        
+        if 0 <= self.hitbox.x < screen.get_width() and 0 <= self.hitbox.y < screen.get_height():
+            screen.blit(self.sprite.image, self.hitbox)
+
+    def __repr__(self):
+        return f"X: {self.x}, Y: {self.y}, Filename: {self.sprite.filename}"
 
         
 pygame.init()
