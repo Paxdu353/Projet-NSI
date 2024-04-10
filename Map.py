@@ -13,7 +13,7 @@ class Map:
         self.Objects = objects
 
 
-    def draw(self, screen: pygame.Surface, scroll: int):
+    def draw(self, screen: pygame.Surface, scroll):
         '''
         :param scroll: Scroll de la map en fonction de chaque joueur présent sur la map de type tuple (int, int)
         :return: Nothing
