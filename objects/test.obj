@@ -1,4 +1,7 @@
-# x, y, id_sprite
+# Blocks (x, y, id_sprite)
 0,0,25
 16,0,24
 0,16,26
+16,16,25
+# Hitbox rectangle (x, y, w, h)
+0,0,16,16
