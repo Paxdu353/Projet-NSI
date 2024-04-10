@@ -3,8 +3,8 @@ import pygame
 from Block import *
 class Map:
     """
-    :param blocks: Liste de blocks de la classe 'Block' -> Hérite de la classe 'Sprite'
-    :param objects: Liste d'objet de la classe 'Block' -> Hérite de la classe 'Sprite'
+    :param blocks: Liste de blocks de la classe 'Block'
+    :param objects: Liste d'objet de la classe 'Block'
 
     """
 
@@ -13,7 +13,7 @@ class Map:
         self.Objects = objects
 
 
-    def draw(self, screen: pygame.Surface, scroll):
+    def draw(self, screen: pygame.Surface, scroll: int):
         '''
         :param scroll: Scroll de la map en fonction de chaque joueur présent sur la map de type tuple (int, int)
         :return: Nothing
