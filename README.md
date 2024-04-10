@@ -27,7 +27,7 @@ La méthode .update() est à appeler autant que possible (à chaque boucle de je
 
 ```
 player_sprites = AnimatedSprite([18, 19, 20])     # Création du sprite animé
-player_sprites.scale(2)                 # Agrandissement d'un facteur 2 de tous les sprites
+player_sprites.scale(2)                           # Agrandissement d'un facteur 2 de tous les sprites
 ```
 
 Block
