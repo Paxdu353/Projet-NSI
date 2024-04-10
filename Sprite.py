@@ -41,3 +41,6 @@ class Sprite(pygame.sprite.Sprite):
         new_width = self.image.get_width() * factor
 
         self.image = pygame.transform.scale(self.image, (new_width, new_height))
+
+    def __repr__(self):
+        return f"ID: {self.id}, FileName: {self.filename}"
