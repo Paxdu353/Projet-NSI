@@ -3,7 +3,7 @@ import Sprite
 
 class Block :
 
-    def __init__(self, x, y, sprite : Sprite.Sprite, crossable = True):
+    def __init__(self, x, y, sprite : Sprite.Sprite, crossable = False):
         self.x = x
         self.y = y
         self.sprite = sprite
