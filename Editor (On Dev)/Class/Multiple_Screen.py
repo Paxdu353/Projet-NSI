@@ -22,7 +22,6 @@ if __name__ == "__main__":
     # Fin des importations des sous classes ici <--
 
     queue = Queue()
-    queue.qsize()
     ecrans = [classe(f'Ecran numéro {index+1}', (640, 480)) for index, classe in enumerate(Ecran.__subclasses__())]
     processus = [Process(target=lancer_ecran, args=(ecran, queue)) for ecran in ecrans]
 
