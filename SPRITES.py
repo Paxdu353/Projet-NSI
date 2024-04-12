@@ -21,10 +21,17 @@ SPRITES={   #Dictionnaire sprites
     "GRASS":{
         "Grass_Flower1":118,
         "Grass_Flower2":218,
+        "Diff_grass_1":78,
+        "Diff_grass_2":79,
+        "Diff_grass_3":80,
+        "Diff_grass_4":81,
     },
 
+    "TERRAIN_WALL":{
+        "Terrain_Wall":65,
+    },
 
-    "ROAD":{
+    "ROAD":{ 
         "Vertical_whiteTapeLeft_road":30,
         "BigCorner_topRight_road":31,
         "BigCorner_bottomRight_road":32,
@@ -53,7 +60,7 @@ SPRITES={   #Dictionnaire sprites
         "All_Road_ManholeCover":55, #Plaque d'égout
     },
 
-    "GRASSPATH":{
+    "GRASSPATH":{ #CHEMIN EN TERRE
         "CenterDot_Path":66,
         "Cross_Path":67,
         "Horizontal_line_Path":68,
@@ -67,6 +74,13 @@ SPRITES={   #Dictionnaire sprites
         "Vertical_line_Path_+_Horizontal_RightLine_Path":76,
         "Horizontal_line_Path_+_Vertical_TopLine_Path":77,
     },
+
+    "UNDER_BRIDGE":{
+        "Under_Bridge_Water_1":55,
+        "Under_Bridge_Water_1":56,
+        "Under_Bridge_Water_1":57,
+    },
+
 
                             #ANIMATION
     "BIG_ZOMBIE_ANIMATION" : {
@@ -107,6 +121,38 @@ SPRITES={   #Dictionnaire sprites
         "MusicNote": [390,391,392],
     },
 
+    "CAN_SHOOTABLE_ANIMATION":{
+        "Can_Frame":[346,347,348,349,350],
+    },
+
+    "SMOKE_ANIMATION":{
+        "Smoke_Frame":[322,323,324,325,326,327]
+    },
+
+    "SPAWNING_CASE_ANIMATION":{
+        "Spawning_Case_Frame":[285,286,287,288,289,290],    #290 = La boite se casse
+    },  
+
+    "SPAWNING_MONEY_ANIMATION":{
+        "Spawning_Money_Frame":[351,352,353,354,355],
+    },
+
+    "STORE_TRUCK_OLDMAN_SMOCKING_ANIMATION":{
+        "Old_Man_Frame":[177,178,179],
+    },
+
+    "UNDER_BRIDGE_WATER_ANIMATION":{ #AVEC PIED
+        "Water_Frame":[59,60,61],
+    
+    },
+
+    "WATER_ANIMATION":{
+        "Water_Frame":[62,63,64],
+    },
+
+    "TOP_WILDMAN_ANIMATION":{ #VOIR AUTRE PARTIE POUR AVOIR LE BAS
+        "Wind_Animation":[223,224,225],
+    },
                         #PLAYER
 
     "PLAYER_WALK_ANIMATION":{
@@ -114,9 +160,6 @@ SPRITES={   #Dictionnaire sprites
         "Player_ToRith_Walk":[480,481,482],
         "Player_Back_Walk":[483,484,485],
     },
-
-
-
 
                         #DECORATIONS
 
@@ -153,7 +196,7 @@ SPRITES={   #Dictionnaire sprites
        "Top_TwoTires":194,
     },
 
-    "BUSHES":{
+    "BUSHES":{ #BUISSONS
         "BottomLeft":82,
         "Left":83,
         "topLeftCorner":84,
@@ -166,7 +209,7 @@ SPRITES={   #Dictionnaire sprites
         "SoloBush2":91,
     },
 
-    "FENCES":{
+    "FENCES":{ #BARRIERE
         "TopView_TopLeft":127,
         "TopView_TopRight":128,
         "TopView_BottomLeft":129,
@@ -177,7 +220,7 @@ SPRITES={   #Dictionnaire sprites
         "TopView_HorizontalRight":134,
     },  
 
-    "STRAW":{
+    "STRAW":{ #PAILLE
         "Center_Straw":119,
         "TopLeft_Starw":120,
         "BottomLeft_Straw":121,
@@ -187,12 +230,64 @@ SPRITES={   #Dictionnaire sprites
     },
 
 
+    "BLOOD_STAINS":{    #TRACES DE SANG
+        "Random_Blood_Stains_1":385,
+        "Random_Blood_Stains_2":386,
+        "Random_Blood_Stains_3":387,
+        "Random_Blood_Stains_4":388,
+        "Random_Blood_Stains_5":389,
+    },
+
+    "SCARECROW":{      #EPOUVANTAIL
+        "Top_ScrareCrow":125,
+        "Bottom_ScareCrow":126,
+    },
+
+    "TOMBSTONE":{   #PIERRE TOMBALE
+        "Tombstone":358,
+    },
+
+    "TRACTOR":{
+        "TopLeft_Tractor":173,
+        "BottomLeft_Tractor":174,
+        "TopRight_Tractor":175,
+        "BottomRight_Tractor":176,
+    },
+
+    "URBAN_THING":{
+        "Mail_Box":146, #BOITE AUX LETTRES
+        "Double_Barrer":152,
+        "Welcome_sign":153,
+        "Bottom_Sign_Grass":154,
+        "CEDEZ_LE_PASSAGE":155,
+        "SENS_INTERDIT":156,
+        "Bottom_sign":157,
+        "50_sign":158,
+        "ahea_sign":159,
+        "STOP":160,
+        "CEDEZ_LE_PASSAGE_onFloor":161,
+        "MailBox":162,
+    },
+
+    "WILDMAN":{ #VOIR ANIMATION POUR LE MOULIN A VENT
+        "1":219, #DE 1 A 4, 1 ETANT LE PLUS BAS
+        "2":220,
+        "3":221,
+        "4":222,
+    },
+
+    "ZOMBIE_POSTER":{
+        "ZOMBIE_POSTER":297,
+    },
+
                             #BATIMENTS
     "GAS_STATION":{
         "Station":226,
         "Pomp_bottom":144,
-        "Pomp_top":145
+        "Pomp_top":145,
     },
+                               
+
 }
 
                             #OBJET
