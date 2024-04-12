@@ -69,9 +69,17 @@ Un objet de type `Block` a vocation à être dessiné sur l'écran du joueur. Ch
 - Méthodes :
   - `draw(screen, scroll)` : dessine le rectangle sur l'écran `screen`, en prenant en compte le scroll actuel (tuple), et à condition que ce dernier soit visible à l'écran
  
-Object
+Item
 -
 Une liste de blocs représentant un objet, comme une maison.
 
+Création : un `filename` facultatif pour charger un item déjà existant.
+- Attributs :
+  - `x`, `y` : coordonnées absolues de l'objet
+  - `block_list` : une liste d'objets de type `Block`
+- Méthodes :
+  - `draw(screen, scroll)` : dessine chaque bloc de la liste sur l'écran `screen` en fonction du scroll
+
 Map
 -
+Une map est constituée de deux couches
