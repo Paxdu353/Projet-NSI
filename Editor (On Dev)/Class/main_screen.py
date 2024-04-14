@@ -3,24 +3,30 @@ import os
 pygame.init()
 
 
-class MainScreen:
+def scale_sprite(factor, image):
+    new_height = int(image.get_height() * factor)
+    new_width = int(image.get_width() * factor)
+    return pygame.transform.scale(image, (new_width, new_height))
 
+
+def scale(factor, dimension):
+    return int(dimension * factor)
+
+
+class MainScreen:
     def __init__(self, dimensions, titre):
+        self.resizable_menu = None
+        self.build_screen = None
         self.dimensions = dimensions
         self.titre = titre
         self.choice = None
         self.screen = pygame.display.set_mode(self.dimensions, pygame.RESIZABLE, pygame.APPACTIVE)
-
-
-
         pygame.display.set_caption(self.titre)
-
-
-
         self.dossier_icon = pygame.image.load("../icon/dossier.png")
         self.back_icon = pygame.image.load("../icon/retour.png")
         self.settings_icon = pygame.image.load("../icon/settings.png")
-        self.menu_icon = pygame.transform.rotate(pygame.transform.scale(pygame.image.load("../icon/menu.png").convert_alpha(), (64,64)), -90)
+        self.menu_icon = pygame.transform.rotate(pygame.transform.scale(pygame.image.load("../icon/menu.png").
+                                                                        convert_alpha(), (64, 64)), -90)
         self.menu_rect = pygame.Rect(self.menu_icon.get_rect())
         self.settings_rect = pygame.Rect(self.settings_icon.get_rect())
         self.folder_positions = []
@@ -36,8 +42,6 @@ class MainScreen:
         self.offset_x = 0
         self.offset_y = 0
 
-
-
     def main(self):
         self.build_screen = pygame.Surface((self.scroll, self.screen.get_height()))
         self.resizable_menu = pygame.Rect(((self.build_screen.get_width() - 10), 0), (10, self.screen.get_height()))
@@ -48,9 +52,6 @@ class MainScreen:
 
         self.settings_rect.x = self.screen.get_width() - self.settings_icon.get_width() - 10
         self.settings_rect.y = 10
-
-
-
 
         if self.is_dragging:
             self.is_close = False
@@ -67,22 +68,22 @@ class MainScreen:
         if -5 <= self.resizable_menu.x <= 5 and not self.is_dragging:
             self.is_close = True
 
-
-
         if pygame.mouse.get_pressed()[0]:
-            if not self.is_dragging and not self.build_screen.get_rect().collidepoint(pygame.mouse.get_pos()) and self.choice:
+            if (not self.is_dragging
+                    and not self.build_screen.get_rect().collidepoint(pygame.mouse.get_pos())
+                    and self.choice):
+
                 self.add_block(self.choice)
 
         elif pygame.mouse.get_pressed()[1]:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            tile_size = self.scale(self.current_scroll, 64)
+            tile_size = scale(self.current_scroll, 64)
 
             self.offset_x = mouse_x % tile_size - tile_size
             self.offset_y = mouse_y % tile_size - tile_size
         elif pygame.mouse.get_pressed()[2]:
             if not self.is_dragging:
                 self.remove_block()
-
 
         for folder_name in os.listdir("../assets/sprites"):
             full_path = os.path.join("../assets/sprites", folder_name)
@@ -93,7 +94,6 @@ class MainScreen:
                 except ValueError:
                     self.folder_positions.append(full_path)
 
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -101,8 +101,11 @@ class MainScreen:
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        if self.resizable_menu.collidepoint(pygame.mouse.get_pos()) and not self.is_close and not self.settings_icon.get_rect().collidepoint(pygame.mouse.get_pos()):
-                            if self.is_dragging == True:
+                        if (self.resizable_menu.collidepoint(pygame.mouse.get_pos())
+                                and not self.is_close
+                                and not self.settings_icon.get_rect().collidepoint(pygame.mouse.get_pos())):
+
+                            if self.is_dragging:
                                 self.is_dragging = False
                             else:
                                 self.is_dragging = True
@@ -154,14 +157,13 @@ class MainScreen:
                         if not self.build_screen.get_rect().collidepoint(event.pos):
                             self.scroll_tile(-0.1)
 
-
     def update(self):
         pass
 
     def draw(self):
         self.screen.fill((144, 144, 144))
         self.build_screen.fill((77, 77, 77))
-        tile_size = self.scale(self.current_scroll, 64)
+        tile_size = scale(self.current_scroll, 64)
 
         if self.current_folder:
             x, y = 75, 25
@@ -207,12 +209,11 @@ class MainScreen:
         else:
             pygame.draw.rect(self.build_screen, (255, 255, 255), self.resizable_menu)
 
-        for _, (sprite, pos) in enumerate(self.maps):
+        for _, (sprite, case, pos) in enumerate(self.maps):
             img = pygame.image.load(sprite)
-            img_scaled = self.scale_sprite(self.current_scroll * 4, img)
-            x, y = pos[0], pos[1]
-            self.screen.blit(img_scaled, (x*tile_size, y*tile_size))
-
+            img_scaled = scale_sprite(self.current_scroll * 4, img)
+            x, y = pos
+            self.screen.blit(img_scaled, (x + self.offset_x, y + self.offset_y))
 
         for line in range(self.size + 1):
             pygame.draw.line(self.screen, (255, 255, 255),
@@ -222,15 +223,14 @@ class MainScreen:
                              (0, line * tile_size + self.offset_y),
                              (self.screen.get_width(), line * tile_size + self.offset_y))
 
-
-
         self.screen.blit(self.build_screen, (0, 0))
 
         if self.is_close:
             pygame.draw.circle(self.screen, (255, 255, 255), (0, self.screen.get_height() // 2), 65)
             self.screen.blit(self.menu_icon, (-5, (self.screen.get_height() // 2) - self.menu_icon.get_height()//2))
 
-        self.screen.blit(self.settings_icon, (self.screen.get_width() - self.settings_icon.get_width(), self.screen.get_height() - self.settings_icon.get_height()))
+        self.screen.blit(self.settings_icon, (self.screen.get_width() - self.settings_icon.get_width(),
+                                              self.screen.get_height() - self.settings_icon.get_height()))
 
         pygame.display.flip()
 
@@ -245,28 +245,26 @@ class MainScreen:
             self.current_scroll = self.current_scroll + next_index
             self.current_scroll = round(self.current_scroll, 1)
 
-
     def add_block(self, path):
         try:
-            tile_size = self.scale(self.current_scroll, 64)
+            tile_size = scale(self.current_scroll, 64)
             x, y = pygame.mouse.get_pos()
             x = x // tile_size
             y = y // tile_size
-            for img, pos in self.maps:
-                if pos == [x, y]:
+            for img, case, pos in self.maps:
+                if case == [x, y]:
                     print('deja')
                     return
 
-            self.maps.append((path, [x, y]))
+            self.maps.append((path, [x, y], [x*tile_size, y*tile_size]))
         except TypeError:
             return
-
 
     def remove_block(self):
 
         for _, (image, pos) in enumerate(self.maps):
             image = pygame.image.load(image)
-            tile_size = self.scale(self.current_scroll, 64)
+            tile_size = scale(self.current_scroll, 64)
             rect = image.get_rect()
             rect.x = pos[0] * tile_size
             rect.y = pos[1] * tile_size
@@ -274,15 +272,6 @@ class MainScreen:
             rect.height = tile_size
             if rect.collidepoint(pygame.mouse.get_pos()):
                 self.maps.pop(_)
-
-    def scale(self, factor, dimension):
-        return int(dimension * factor)
-
-    def scale_sprite(self, factor, image):
-        new_height = int(image.get_height() * factor)
-        new_width = int(image.get_width() * factor)
-        return pygame.transform.scale(image, (new_width, new_height))
-
 
     def run(self):
         while True:
