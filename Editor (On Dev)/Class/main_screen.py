@@ -9,7 +9,6 @@ class MainScreen:
         self.dimensions = dimensions
         self.titre = titre
         self.choice = None
-        self.list_of_images = []
         self.screen = pygame.display.set_mode(self.dimensions, pygame.RESIZABLE, pygame.APPACTIVE)
 
 
@@ -28,13 +27,14 @@ class MainScreen:
         self.image_positions = []
         self.maps = []
         self.current_folder = None
-        self.img_choice = []
         self.scroll = 5
         self.is_dragging = False
         self.is_close = False
         self.size = 500
         self.current_scroll = 1
         self.clock = pygame.time.Clock()
+        self.offset_x = 0
+        self.offset_y = 0
 
 
 
@@ -67,17 +67,23 @@ class MainScreen:
         if -5 <= self.resizable_menu.x <= 5 and not self.is_dragging:
             self.is_close = True
 
-        print(pygame.mouse.get_pressed())
+
 
         if pygame.mouse.get_pressed()[0]:
-            if not self.is_dragging and not self.build_screen.get_rect().collidepoint(pygame.mouse.get_pos()):
+            if not self.is_dragging and not self.build_screen.get_rect().collidepoint(pygame.mouse.get_pos()) and self.choice:
                 self.add_block(self.choice)
+
+        elif pygame.mouse.get_pressed()[1]:
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            tile_size = self.scale(self.current_scroll, 64)
+
+            self.offset_x = mouse_x % tile_size - tile_size
+            self.offset_y = mouse_y % tile_size - tile_size
         elif pygame.mouse.get_pressed()[2]:
             if not self.is_dragging:
                 self.remove_block()
 
 
-        #print(max_img)
         for folder_name in os.listdir("../assets/sprites"):
             full_path = os.path.join("../assets/sprites", folder_name)
 
@@ -95,7 +101,7 @@ class MainScreen:
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        if self.resizable_menu.collidepoint(pygame.mouse.get_pos()) and not self.is_close:
+                        if self.resizable_menu.collidepoint(pygame.mouse.get_pos()) and not self.is_close and not self.settings_icon.get_rect().collidepoint(pygame.mouse.get_pos()):
                             if self.is_dragging == True:
                                 self.is_dragging = False
                             else:
@@ -109,7 +115,6 @@ class MainScreen:
                             if self.current_folder:
                                 if self.back_icon.get_rect(topleft=(10, 10)).collidepoint(event.pos):
                                     self.current_folder = None
-                                    self.img_choice = None
                                     self.image_positions.clear()
                                 else:
                                     for img_path, pos in self.image_positions:
@@ -119,7 +124,6 @@ class MainScreen:
                                         img_rect.x -= 3
                                         img_rect.y -= 3
                                         if img_rect.collidepoint(event.pos):
-                                            self.img_choice = img_rect
                                             self.choice = img_path
 
                             else:
@@ -159,16 +163,7 @@ class MainScreen:
         self.build_screen.fill((77, 77, 77))
         tile_size = self.scale(self.current_scroll, 64)
 
-
-
         if self.current_folder:
-            if self.choice:
-                pygame.draw.circle(self.screen, (0, 0, 0), (self.screen.get_width(), 0),
-                                   (self.screen.get_width() // 10) + 5)
-
-                pygame.draw.circle(self.screen, (255, 255, 255), (self.screen.get_width(), 0),
-                                   self.screen.get_width()//10)
-
             x, y = 75, 25
             max_img = (self.build_screen.get_width() - 75) // 42
             n = 0
@@ -207,25 +202,25 @@ class MainScreen:
                 start_x += step_x
                 n += 1
 
-        for img in self.list_of_images:
-            new = pygame.transform.scale(img, (64, 64))
-            self.screen.blit(new, (pygame.mouse.get_pos()))
-
         if self.is_dragging:
             pygame.draw.rect(self.build_screen, (0, 255, 0), self.resizable_menu)
         else:
             pygame.draw.rect(self.build_screen, (255, 255, 255), self.resizable_menu)
 
         for _, (sprite, pos) in enumerate(self.maps):
-            img_scaled = self.scale_sprite(self.current_scroll * 4, sprite)
+            img = pygame.image.load(sprite)
+            img_scaled = self.scale_sprite(self.current_scroll * 4, img)
             x, y = pos[0], pos[1]
             self.screen.blit(img_scaled, (x*tile_size, y*tile_size))
 
 
-        for line in range(self.size):
-            pygame.draw.line(self.screen, (255, 255, 255), (line * tile_size, 0),
-                             (line * tile_size, 1080))
-            pygame.draw.line(self.screen, (255, 255, 255), (0, line * tile_size), (self.size * tile_size, line * tile_size))
+        for line in range(self.size + 1):
+            pygame.draw.line(self.screen, (255, 255, 255),
+                             (line * tile_size + self.offset_x, 0),
+                             (line * tile_size + self.offset_x, self.screen.get_height()))
+            pygame.draw.line(self.screen, (255, 255, 255),
+                             (0, line * tile_size + self.offset_y),
+                             (self.screen.get_width(), line * tile_size + self.offset_y))
 
 
 
@@ -235,7 +230,7 @@ class MainScreen:
             pygame.draw.circle(self.screen, (255, 255, 255), (0, self.screen.get_height() // 2), 65)
             self.screen.blit(self.menu_icon, (-5, (self.screen.get_height() // 2) - self.menu_icon.get_height()//2))
 
-
+        self.screen.blit(self.settings_icon, (self.screen.get_width() - self.settings_icon.get_width(), self.screen.get_height() - self.settings_icon.get_height()))
 
         pygame.display.flip()
 
@@ -257,21 +252,20 @@ class MainScreen:
             x, y = pygame.mouse.get_pos()
             x = x // tile_size
             y = y // tile_size
-            img = pygame.image.load(path)
             for img, pos in self.maps:
                 if pos == [x, y]:
                     print('deja')
                     return
 
-            self.maps.append((img, [x, y]))
+            self.maps.append((path, [x, y]))
         except TypeError:
-            pass
+            return
 
 
     def remove_block(self):
 
         for _, (image, pos) in enumerate(self.maps):
-            print(image, pos)
+            image = pygame.image.load(image)
             tile_size = self.scale(self.current_scroll, 64)
             rect = image.get_rect()
             rect.x = pos[0] * tile_size
