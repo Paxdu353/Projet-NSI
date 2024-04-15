@@ -210,8 +210,8 @@ class MainScreen:
         for _, (sprite, case, pos) in enumerate(self.maps):
             img = pygame.image.load(sprite)
             img_scaled = scale_sprite(self.current_scroll * 4, img)
-            x, y = pos
-            self.screen.blit(img_scaled, (x + self.offset_x, y + self.offset_y))
+            x, y = case
+            self.screen.blit(img_scaled, (x * tile_size, y * tile_size))
 
         for line in range(self.size + 1):
             pygame.draw.line(self.screen, (255, 255, 255),
@@ -260,12 +260,12 @@ class MainScreen:
 
     def remove_block(self):
 
-        for _, (image, pos) in enumerate(self.maps):
+        for _, (image, case, pos) in enumerate(self.maps):
             image = pygame.image.load(image)
             tile_size = scale(self.current_scroll, 64)
             rect = image.get_rect()
-            rect.x = pos[0] * tile_size
-            rect.y = pos[1] * tile_size
+            rect.x = case[0] * tile_size
+            rect.y = case[1] * tile_size
             rect.width = tile_size
             rect.height = tile_size
             if rect.collidepoint(pygame.mouse.get_pos()):
