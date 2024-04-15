@@ -76,9 +76,19 @@ Une liste de blocs représentant un objet, comme une maison.
 Création : un `filename` facultatif pour charger un item déjà existant.
 - Attributs :
   - `x`, `y` : coordonnées absolues de l'objet
-  - `block_list` : une liste d'objets de type `Block`
+  - `block_list` : une liste d'objets de type `Block`. Chaque bloc composant l'item possède des **coordonnées relatives** à l'item.
 - Méthodes :
-  - `draw(screen, scroll)` : dessine chaque bloc de la liste sur l'écran `screen` en fonction du scroll
+  - `draw(screen, scroll)` : dessine chaque bloc de la liste sur l'écran `screen` en fonction du scroll. Attention, il faut tenir compte des coordonnées absolues de l'item et des coordonnées relatives de chaque bloc composant l'item !
+  - `save(filename)` : enregistre l'item courant dans un fichier
+
+Pour l'enregistrement d'un item dans un fichier, on peut imaginer une solution de ce type :
+
+```
+30, 100          # Coordonnées de l'item
+0, 0, 85         # Coordonnées et id_sprite du premier bloc, relativement à l'item
+0, 16, 86        # Coordonnées du 2nd bloc
+...
+```
 
 Map
 -
