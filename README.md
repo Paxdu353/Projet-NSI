@@ -17,7 +17,8 @@ Par défaut, les sprites ont une taille de 16x16 pixels (ou des dimensions simil
 
 Pour *zoomer*, il faut ruser un peu. Par exemple, pour un zoom égal à 2, les sprites doivent doubler de taille. Il faut donc les redimensionner proportionnellement (`pygame` fait ça très bien) mais également les afficher de façon décalée à l'écran.
 
-![schemas_projet_nsi_2](https://github.com/Paxdu353/Projet-NSI/assets/130542548/a405004a-1e50-4fbd-9c70-bd06bbe3fc91)
+![schemas_projet_nsi_2](https://github.com/Paxdu353/Projet-NSI/assets/130542548/80be8c23-a287-43b6-bef4-c82daf2d9601)
+
 
 Si on se contente de les redimensionner, les sprites vont se chevaucher et la map ne ressemblera plus à rien...
 
