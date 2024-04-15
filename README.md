@@ -8,11 +8,18 @@ Lorsque le joueur se déplace, ses coordonnées sont modifiées, et la variable 
 
 ![schemas_projet_nsi](https://github.com/Paxdu353/Projet-NSI/assets/130542548/58988092-4a00-4406-b59b-75a88b7be87a)
 
-
 Chaque objet composant la map , appelé _bloc_ (que ce soit le sol, une barrière, un autre personnage...) possède des **coordonnées absolues** (relativement à l'origine de la map, en haut à gauche) et des **coordonnées relatives** (relativement à l'origine de l'écran du joueur). Le passage des unes aux autres se fait grâce à la connaissance du scroll.
 
 >[!IMPORTANT]
 >Les blocs situés hors de l'écran ne sont pas représentés.
+
+Par défaut, les sprites ont une taille de 16x16 pixels (ou des dimensions similaires si les sprites ne sont pas carrés). Si l'écran de jeu fait 800x600, la zone visible du jeu est très importante, les personnages et les objets sont très petits. Il est donc nécessaire de **simuler un zoom de la map** et des différents objets qui la composent.
+
+Pour *zoomer*, il faut ruser un peu. Par exemple, pour un zoom égal à 2, les sprites doivent doubler de taille. Il faut donc les redimensionner proportionnellement (`pygame` fait ça très bien) mais également les afficher de façon décalée à l'écran.
+
+![schemas_projet_nsi_2](https://github.com/Paxdu353/Projet-NSI/assets/130542548/a405004a-1e50-4fbd-9c70-bd06bbe3fc91)
+
+Si on se contente de les redimensionner, les sprites vont se chevaucher et la map ne ressemblera plus à rien...
 
 # Description des différentes classes
 
@@ -68,7 +75,7 @@ Un objet de type `Block` a vocation à être dessiné sur l'écran du joueur. Ch
   - `crossable` : si `crossable` vaut `True`, alors le bloc est traversant et la gestion des collisions n'est pas activée
 - Méthodes :
   - `draw(screen, scroll, zoom)` : dessine le rectangle sur l'écran `screen`, en prenant en compte le scroll actuel (tuple) et le zoom utilisé, et à condition que ce dernier soit visible à l'écran
-  - `collide(other_block) : retourne `True` si collision avec `other_block`
+  - `collide(other_block)` : retourne `True` si collision avec `other_block`
  
 Item
 -
