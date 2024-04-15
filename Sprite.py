@@ -37,6 +37,7 @@ class Sprite(pygame.sprite.Sprite):
         Permet de redimmensionner le sprite
         :return: Nothing
         """
+        self.image = pygame.image.load(self.filename).convert_alpha()
         new_height = self.image.get_height() * factor
         new_width = self.image.get_width() * factor
 
