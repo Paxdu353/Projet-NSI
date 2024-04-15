@@ -67,7 +67,7 @@ Un objet de type `Block` a vocation à être dessiné sur l'écran du joueur. Ch
   - `hitbox` : un `pygame.Rect` pour la gestion des collisions
   - `crossable` : si `crossable` vaut `True`, alors le bloc est traversant et la gestion des collisions n'est pas activée
 - Méthodes :
-  - `draw(screen, scroll)` : dessine le rectangle sur l'écran `screen`, en prenant en compte le scroll actuel (tuple), et à condition que ce dernier soit visible à l'écran
+  - `draw(screen, scroll, zoom)` : dessine le rectangle sur l'écran `screen`, en prenant en compte le scroll actuel (tuple) et le zoom utilisé, et à condition que ce dernier soit visible à l'écran
   - `collide(other_block) : retourne `True` si collision avec `other_block`
  
 Item
@@ -79,7 +79,7 @@ Création : un `filename` facultatif pour charger un item déjà existant.
   - `x`, `y` : coordonnées absolues de l'objet
   - `block_list` : une liste d'objets de type `Block`. Chaque bloc composant l'item possède des **coordonnées relatives** à l'item.
 - Méthodes :
-  - `draw(screen, scroll)` : dessine chaque bloc de la liste sur l'écran `screen` en fonction du scroll. Attention, il faut tenir compte des coordonnées absolues de l'item et des coordonnées relatives de chaque bloc composant l'item !
+  - `draw(screen, scroll, zoom)` : dessine chaque bloc de la liste sur l'écran `screen` en fonction du scroll et du zoom. Attention, il faut tenir compte des coordonnées absolues de l'item et des coordonnées relatives de chaque bloc composant l'item !
   - `save(filename)` : enregistre l'item courant dans un fichier (utile lors de la création d'item)
 
 Pour l'enregistrement d'un item dans un fichier, on peut imaginer une solution de ce type :
@@ -91,18 +91,6 @@ Pour l'enregistrement d'un item dans un fichier, on peut imaginer une solution d
 ...
 ```
 
-Map
--
-Une map est constituée de deux couches : une couche `background` représentée par une liste d'objets de type `Block` **traversants** (terre, route, herbe...) et une couche `items` représentées par une liste d'objets de type `Block` ou `Item` **non traversants** (barrière, voiture, maison...) pour lesquels il faudra gérer les collisions avec les différents joueurs.
-
-Création : un `filename` facultatif pour charger une map déjà existante.
-- Attributs :
-  - `background`
-  - `items`
-- Méthodes :
-  - `draw(screen, scroll)` : dessine la map *locale*, c'est à dire l'ensemble des éléments la composant visibles par le joueur
-  - `save(filename)` : enregistre la map dans un fichier (utile lors de la création de map)
-
 Player
 -
 Une classe représentant un joueur. Cette classe hérite de la classe `Block`, c'est à dire qu'on considère qu'un joueur est un bloc, disposant d'attributs et de méthodes supplémentaires. On définira la classe comme ceci :
@@ -113,3 +101,26 @@ import Block
 class Player(Block):
   ...
 ```
+
+Création : une liste de sprites animés (de type `AnimatedSprite`), un sprite animé par direction de déplacement
+- Attributs non hérités de `Block` :
+  - `sprite_dic` : un dictionnaire dont les clés sont les différentes directions (haut, bas, gauche, droite) et les valeurs des sprites animés correspondant à chaque direction
+  - `vx`, `vy` : coordonnées du vecteur vitesse de déplacement (utile pour la mise à jour des sprites et le déplacement du personnage)
+- Méthodes non héritées de `Block`:
+  - `check_moves()` : méthode à appeler à chaque tour dans la boucle de jeu, vérifiant si un événement est survenu (clic souris, appui sur une touche...) et déplaçant le personnage en conséquence.
+  - `move()` : déplace le personnage, en fonction de `vx` et `vy` et des éventuelles collisions qui pourraient survenir. **Cette fonction retourne le scroll associé au personnage.**
+
+Map
+-
+Une map est constituée de deux couches : une couche `background` représentée par une liste d'objets de type `Block` **traversants** (terre, route, herbe...) et une couche `items` représentées par une liste d'objets de type `Block` ou `Item` **non traversants** (barrière, voiture, maison...) pour lesquels il faudra gérer les collisions avec les différents joueurs.
+
+Création : un `filename` facultatif pour charger une map déjà existante.
+- Attributs :
+  - `background`
+  - `items`
+  - `players` : une liste de joueurs à afficher
+  - `zoom` : niveau de zoom utilisé pour l'affichage
+- Méthodes :
+  - `draw(screen, scroll)` : dessine la map *locale*, c'est à dire l'ensemble des éléments la composant visibles par le joueur, en fonction du scroll et du zoom.
+  - `save(filename)` : enregistre la map dans un fichier (utile lors de la création de map)
+  - `zoom_to(new_zoom)` : change le zoom actuellement utilisé sur la map : il faut rescaler tous les sprites.
