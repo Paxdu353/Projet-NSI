@@ -25,8 +25,7 @@ class MainScreen:
         self.dossier_icon = pygame.image.load("../icon/dossier.png")
         self.back_icon = pygame.image.load("../icon/retour.png")
         self.settings_icon = pygame.image.load("../icon/settings.png")
-        self.menu_icon = pygame.transform.rotate(pygame.transform.scale(pygame.image.load("../icon/menu.png").
-                                                                        convert_alpha(), (64, 64)), -90)
+        self.menu_icon = pygame.transform.rotate(pygame.transform.scale(pygame.image.load("../icon/menu.png").convert_alpha(), (64, 64)), -90)
         self.menu_rect = pygame.Rect(self.menu_icon.get_rect())
         self.settings_rect = pygame.Rect(self.settings_icon.get_rect())
         self.folder_positions = []
@@ -49,7 +48,6 @@ class MainScreen:
         minimum_resize = self.screen.get_height() // 4
         self.menu_rect.x = -5
         self.menu_rect.y = (self.screen.get_height() // 2) - self.menu_icon.get_height()//2
-
         self.settings_rect.x = self.screen.get_width() - self.settings_icon.get_width() - 10
         self.settings_rect.y = 10
 
