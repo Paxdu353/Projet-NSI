@@ -45,7 +45,7 @@ class MainScreen:
         self.build_screen = pygame.Surface((self.scroll, self.screen.get_height()))
         self.resizable_menu = pygame.Rect(((self.build_screen.get_width() - 10), 0), (10, self.screen.get_height()))
         maximum_resize = self.screen.get_width() // 2
-        minimum_resize = self.screen.get_height() // 4
+        minimum_resize = self.screen.get_width() // 4
         self.menu_rect.x = -5
         self.menu_rect.y = (self.screen.get_height() // 2) - self.menu_icon.get_height()//2
         self.settings_rect.x = self.screen.get_width() - self.settings_icon.get_width() - 10
