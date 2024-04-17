@@ -32,10 +32,8 @@ class Item :
         id_sprite : id / liste d'id du sprite choisi pour le bloc
          """
         
-        if type(id_sprite) == type([]): # Liste de sprites
-            sprite = AnimatedSprite.AnimatedSprite(id_sprite)
-        else:
-            sprite = Sprite.Sprite(id_sprite)
+        sprite = Sprite.Sprite(id_sprite)
+
         block = Block.Block(x / size, y / size, sprite, size)
         self.blocks.append(block)
 
