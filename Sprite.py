@@ -1,5 +1,9 @@
 import pygame
+import os
+import SPRITES
 import glob
+
+
 
 class Sprite(pygame.sprite.Sprite):
     """
@@ -9,10 +13,15 @@ class Sprite(pygame.sprite.Sprite):
     def __init__(self, id):
         super().__init__()
         try:
-            self.filename = glob.glob(f'sprites/*_Capa-{id}.png')[0]
+            self.filename = glob.glob(f'{os.path.dirname(SPRITES.__file__)}/sprites/Zombie-Tileset---_*_Capa-{id}.png')[0]
             self.image = pygame.image.load(self.filename).convert_alpha()
+
         except IndexError:
-            raise IndexError(f'Le sprite {id} n\'existe pas')
+            self.filename = glob.glob(f'{os.path.dirname(SPRITES.__file__)}/sprites/bug_sprite.png')[0]
+            self.image = pygame.image.load(self.filename).convert_alpha()
+
+        '''except IndexError:
+            raise IndexError(f'Le sprite {id} n\'existe pas')'''
 
         self.id = id
         self.rect = self.image.get_rect()
@@ -45,3 +54,4 @@ class Sprite(pygame.sprite.Sprite):
 
     def __repr__(self):
         return f"ID: {self.id}, FileName: {self.filename}"
+
