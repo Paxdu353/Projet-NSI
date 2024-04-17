@@ -2,7 +2,7 @@ SPRITES={   #Dictionnaire sprites
 
 
                             #SOL
-    "BRIDGE_SPRITES" : {
+    "BRIDGE" : {
         "left":107,
         "center":108,
         "right":109
@@ -76,14 +76,14 @@ SPRITES={   #Dictionnaire sprites
     },
 
     "UNDER_BRIDGE":{
-        "Under_Bridge_Water_1":55,
-        "Under_Bridge_Water_1":56,
-        "Under_Bridge_Water_1":57,
+        "Under_Bridge_Water_1": 55,
+        "Under_Bridge_Water_2": 56,
+        "Under_Bridge_Water_3": 57,
     },
 
 
                             #ANIMATION
-    "BIG_ZOMBIE_ANIMATION" : {
+    "ZOMBIE" : {
         "face":413,
         "faceLeft":[414,416,417],
         "faceRight":415,
@@ -92,70 +92,70 @@ SPRITES={   #Dictionnaire sprites
         "back3":420
     },
 
-    "BIG_ZOMBIE_DAMAGE_ANIMATION" : {
+    "ZOMBIE_DAMAGE" : {
         "face_damaged_zombie": [422, 423, 424],
         "left_damaged_zombie": [425,426,427],
         "back_damaged_zombie": [428,429,430],
 
     },
 
-    "BLOOD_ANIMATION" : {
+    "BLOOD" : {
         "blood1":[380,381,382,383,384]
     },
 
 
-    "DEAD_ZOMBIE_ANIMATION":{
+    "DEAD_ZOMBIE":{
         "Floor_Zombie": [291,294,296],
         "StandAgainstWall_Zombie" : [292,293],
     },
 
-    "EXPLODING_BARREL_ANIMATION":{
+    "EXPLODING_BARREL":{
         "EXPLODING_BARREL":[147,148,149,150],
     },
 
-    "EXPLOSION_ANIMATION":{
+    "EXPLOSION":{
         "EXPLOSION" : [359,360,361,362,363,364]
     },
 
-    "MUSICNOTE_ANIMATION":{
+    "MUSICNOTE":{
         "MusicNote": [390,391,392],
     },
 
-    "CAN_SHOOTABLE_ANIMATION":{
+    "CAN_SHOOTABLE":{
         "Can_Frame":[346,347,348,349,350],
     },
 
-    "SMOKE_ANIMATION":{
+    "SMOKE":{
         "Smoke_Frame":[322,323,324,325,326,327]
     },
 
-    "SPAWNING_CASE_ANIMATION":{
+    "SPAWNING_CASE":{
         "Spawning_Case_Frame":[285,286,287,288,289,290],    #290 = La boite se casse
     },  
 
-    "SPAWNING_MONEY_ANIMATION":{
+    "SPAWNING_MONEY":{
         "Spawning_Money_Frame":[351,352,353,354,355],
     },
 
-    "STORE_TRUCK_OLDMAN_SMOCKING_ANIMATION":{
+    "TRUCK_OLDMAN_SMOCKING":{
         "Old_Man_Frame":[177,178,179],
     },
 
-    "UNDER_BRIDGE_WATER_ANIMATION":{ #AVEC PIED
+    "UNDER_BRIDGE_WATER":{ #AVEC PIED
         "Water_Frame":[59,60,61],
     
     },
 
-    "WATER_ANIMATION":{
+    "WATER":{
         "Water_Frame":[62,63,64],
     },
 
-    "TOP_WILDMAN_ANIMATION":{ #VOIR AUTRE PARTIE POUR AVOIR LE BAS
+    "TOP_WILDMAN":{ #VOIR AUTRE PARTIE POUR AVOIR LE BAS
         "Wind_Animation":[223,224,225],
     },
                         #PLAYER
 
-    "PLAYER_WALK_ANIMATION":{
+    "PLAYER_WALK":{
         "Player_Face_Walk":[477,478,479],
         "Player_ToRith_Walk":[480,481,482],
         "Player_Back_Walk":[483,484,485],
