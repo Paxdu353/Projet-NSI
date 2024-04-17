@@ -34,4 +34,10 @@ class Block :
         self.sprite.scale(size / DEFAULT_SIZE)
         self.hitbox = self.sprite.image.get_rect()
 
+
+    def debug_draw(self, screen : pygame.Surface, x, y, scroll):
+    self.hitbox.x = self.x * self.size + scroll[0]
+    self.hitbox.y = self.y * self.size + scroll[1]
+    screen.blit(self.sprite.image, (x + scroll[0], y + scroll[1]))
+
     
