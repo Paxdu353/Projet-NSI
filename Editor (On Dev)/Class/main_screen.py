@@ -80,10 +80,7 @@ class MainScreen:
                 self.add_block()
 
         elif pygame.mouse.get_pressed()[1]:
-            mouse_x, mouse_y = pygame.mouse.get_pos()
-            tile_size = self.scale(self.current_scroll, 64)
             x, y = self.get_mouse_movement()
-            print(x, y)
             self.offset_x += x
             self.offset_y += y
 
@@ -99,63 +96,65 @@ class MainScreen:
                 self.folder_positions.append(folder_name)
 
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    exit()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
 
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        if self.resizable_menu.collidepoint(pygame.mouse.get_pos()) and not self.is_close and not self.settings_icon.get_rect().collidepoint(pygame.mouse.get_pos()):
-                            if self.is_dragging == True:
-                                self.is_dragging = False
-                            else:
-                                self.is_dragging = True
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if self.resizable_menu.collidepoint(pygame.mouse.get_pos()) and not self.is_close and not self.settings_icon.get_rect().collidepoint(pygame.mouse.get_pos()):
+                        if self.is_dragging == True:
+                            self.is_dragging = False
+                        else:
+                            self.is_dragging = True
 
-                        elif self.is_close and self.menu_rect.collidepoint(pygame.mouse.get_pos()):
-                            self.is_close = False
-                            self.scroll = minimum_resize
+                    elif self.is_close and self.menu_rect.collidepoint(pygame.mouse.get_pos()):
+                        self.is_close = False
+                        self.scroll = minimum_resize
 
-                        elif self.build_screen.get_rect().collidepoint(pygame.mouse.get_pos()):
-                            if self.current_folder:
-                                if self.back_icon.get_rect(topleft=(10, 10)).collidepoint(event.pos):
-                                    self.current_folder = None
-                                    self.image_positions.clear()
-
-                                else:
-                                    for img in self.image_positions:
-                                        if img.hitbox.collidepoint(event.pos):
-                                            self.choice = img
-                                            print(self.choice)
+                    elif self.build_screen.get_rect().collidepoint(pygame.mouse.get_pos()):
+                        if self.current_folder:
+                            if self.back_icon.get_rect(topleft=(10, 10)).collidepoint(event.pos):
+                                self.current_folder = None
+                                self.image_positions.clear()
 
                             else:
-                                start_x, start_y = 25, 25
-                                step_x = self.dossier_icon.get_width() + 50
-                                max_img = self.build_screen.get_width() // (step_x + 5)
-                                n = 0
-                                for path in self.folder_positions:
-                                    if max_img == 0:
-                                        break
-                                    if n == max_img:
-                                        start_y += 80
-                                        start_x = 25
-                                        n = 0
-                                    rect_dossier = pygame.Rect((start_x, start_y), self.dossier_icon.get_size())
-                                    start_x += step_x
-                                    n += 1
-                                    if rect_dossier.collidepoint(event.pos):
-                                        self.current_folder = path
-                                        break
+                                for img in self.image_positions:
+                                    if img.hitbox.collidepoint(event.pos):
+                                        self.choice = img
+
+                        else:
+                            start_x, start_y = 25, 25
+                            step_x = self.dossier_icon.get_width() + 50
+                            max_img = self.build_screen.get_width() // (step_x + 5)
+                            n = 0
+                            for path in self.folder_positions:
+                                if max_img == 0:
+                                    break
+                                if n == max_img:
+                                    start_y += 80
+                                    start_x = 25
+                                    n = 0
+                                rect_dossier = pygame.Rect((start_x, start_y), self.dossier_icon.get_size())
+                                start_x += step_x
+                                n += 1
+                                if rect_dossier.collidepoint(event.pos):
+                                    self.current_folder = path
+                                    break
+
+                elif event.button == 2:
+                    self.last_pos = pygame.mouse.get_pos()
 
 
 
-                    elif event.button == 4:
-                        if not self.build_screen.get_rect().collidepoint(event.pos):
-                            self.scroll_tile(0.1)
+                elif event.button == 4:
+                    if not self.build_screen.get_rect().collidepoint(event.pos):
+                        self.scroll_tile(0.1)
 
-                    elif event.button == 5:
-                        if not self.build_screen.get_rect().collidepoint(event.pos):
-                            self.scroll_tile(-0.1)
+                elif event.button == 5:
+                    if not self.build_screen.get_rect().collidepoint(event.pos):
+                        self.scroll_tile(-0.1)
 
 
     def update(self):
@@ -216,34 +215,38 @@ class MainScreen:
         else:
             pygame.draw.rect(self.build_screen, (255, 255, 255), self.resizable_menu)
 
-        print(self.offset_x, self.offset_y)
         for img in self.maps:
-            img.debug_draw(self.screen, img.x * tile_size, img.y * tile_size, (self.offset_x, self.offset_y))
+            img.draw(self.screen, (self.offset_x, self.offset_y))
 
 
 
         for line in range(self.size + 1):
             pygame.draw.line(self.screen, (255, 255, 255),
-                             (line * tile_size + self.offset_x, 0),
-                             (line * tile_size + self.offset_x, self.screen.get_height()))
+                             (line * tile_size - self.offset_x, 0),
+                             (line * tile_size - self.offset_x, self.screen.get_height()))
 
             pygame.draw.line(self.screen, (255, 255, 255),
-                             (0, line * tile_size + self.offset_y),
-                             (self.screen.get_width(), line * tile_size + self.offset_y))
+                             (0, line * tile_size - self.offset_y),
+                             (self.screen.get_width(), line * tile_size - self.offset_y))
 
 
 
         self.screen.blit(self.build_screen, (0, 0))
-
         if self.is_close:
             pygame.draw.circle(self.screen, (255, 255, 255), (0, self.screen.get_height() // 2), 65)
             self.screen.blit(self.menu_icon, (-5, (self.screen.get_height() // 2) - self.menu_icon.get_height()//2))
 
         self.screen.blit(self.settings_icon, (self.screen.get_width() - self.settings_icon.get_width(), self.screen.get_height() - self.settings_icon.get_height()))
-
+        #pygame.draw.rect(self.screen, (255, 255, 255), self.settings_icon.get_rect())
         pygame.display.flip()
 
     def scroll_tile(self, next_index):
+        tile_size = self.scale(self.current_scroll, 64)
+        x, y = pygame.mouse.get_pos()
+        x = x //tile_size
+        y = y //tile_size
+
+
         if next_index == -0.1 and round(self.current_scroll, 1) == 0.2:
             self.current_scroll = 0.2
 
@@ -255,26 +258,35 @@ class MainScreen:
             self.current_scroll = round(self.current_scroll, 1)
 
 
+        for img in self.maps:
+            img.resize(tile_size)
+
+
+        self.offset_x = x * tile_size - self.screen.get_width() //2
+        self.offset_y = y * tile_size - self.screen.get_height() // 2
+
+
+
+
     def add_block(self):
         try:
             tile_size = self.scale(self.current_scroll, 64)
             x, y = pygame.mouse.get_pos()
+            x += self.offset_x
+            y += self.offset_y
             self.choice.x = x // tile_size
             self.choice.y = y // tile_size
             for img in self.maps:
                 if [img.x, img.y] == [self.choice.x, self.choice.y]:
-                    print('deja')
                     return
 
-            block = Block(self.choice.x, self.choice.y, self.choice.sprite, 64)
+            block = Block(self.choice.x, self.choice.y, self.choice.sprite, tile_size)
             self.maps.append(block)
-            print(block)
         except TypeError:
             return
 
 
     def remove_block(self):
-
         for _, img in enumerate(self.maps):
             if img.hitbox.collidepoint(pygame.mouse.get_pos()):
                 self.maps.pop(_)
@@ -291,15 +303,15 @@ class MainScreen:
         current_pos = pygame.mouse.get_pos()
         dx = current_pos[0] - self.last_pos[0]
         dy = current_pos[1] - self.last_pos[1]
-        max_movement_threshold = 15
-        dx = max(-max_movement_threshold, min(max_movement_threshold, dx))
-        dy = max(-max_movement_threshold, min(max_movement_threshold, dy))
 
-        self.last_pos = current_pos 
+        self.last_pos = current_pos
 
-        return (dx, dy)
+        return (-dx, -dy)
 
     def run(self):
+        block = Block(0, 0, Sprite(1584), 32)
+        self.maps.append(block)
+
         while True:
             self.main()
             self.update()
