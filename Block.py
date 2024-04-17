@@ -25,7 +25,6 @@ class Block :
     def draw(self, screen : pygame.Surface, scroll):
         self.hitbox.x = self.x*self.size - scroll[0]
         self.hitbox.y = self.y*self.size - scroll[1]
-        print(self.hitbox.top, self.hitbox.bottom)
         if 0 <= self.hitbox.right and self.hitbox.left < screen.get_width() and 0 <= self.hitbox.bottom and self.hitbox.top < screen.get_height() :
             screen.blit(self.sprite.image, self.hitbox)
     
