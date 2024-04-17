@@ -1,6 +1,6 @@
 from fileinput import filename
 from tarfile import BLOCKSIZE
-import Block, Sprite, pygame
+import Block, Sprite, pygame, AnimatedSprite
 
 class Item :
 
@@ -29,9 +29,13 @@ class Item :
         """ Ajoute un bloc à la liste
 
         x,y : coordonnées relatives du bloc
-        id_sprite : id du sprite choisi pour le bloc
+        id_sprite : id / liste d'id du sprite choisi pour le bloc
          """
-        sprite = Sprite.Sprite(id_sprite)
+        
+        if type(id_sprite) == type([]): # Liste de sprites
+            sprite = AnimatedSprite.AnimatedSprite(id_sprite)
+        else:
+            sprite = Sprite.Sprite(id_sprite)
         block = Block.Block(x / size, y / size, sprite, size)
         self.blocks.append(block)
 
@@ -52,4 +56,6 @@ class Item :
             pygame.draw.line(screen, (255,0,0), (0, y), (screen.get_width(), y))
     
     def save(self, filename):
-        pass
+        with open(filename, "w") as fichier:
+            for block in self.blocks:
+                fichier.write(f"{int(block.x*16)},{int(block.y*16)},{block.sprite.id}\n")
