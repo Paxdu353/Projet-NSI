@@ -1,7 +1,7 @@
 import Sprite
 import pygame
 
-class AnimatedSpite():
+class AnimatedSprite():
 
     def __init__(self, liste, animation_time = 200):
         self.sprite_list = []
