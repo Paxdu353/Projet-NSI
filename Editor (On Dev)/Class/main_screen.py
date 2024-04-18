@@ -27,13 +27,16 @@ class MainScreen:
         self.settings_icon = pygame.image.load("../icon/settings.png")
         self.menu_icon = pygame.transform.rotate(pygame.transform.scale(pygame.image.load("../icon/menu.png").convert_alpha(), (64,64)), -90)
         self.menu_rect = pygame.Rect(self.menu_icon.get_rect())
-        self.settings_rect = pygame.Rect(self.settings_icon.get_rect())
+        self.settings_rect = self.settings_icon.get_rect()
         self.folder_positions = []
         self.image_positions = []
         self.maps = []
         self.current_folder = None
         self.scroll = 5
         self.is_dragging = False
+        self.is_draging_settings = False
+        self.color_outline_settings = (255, 255, 255)
+        self.settings = None
         self.is_close = False
         self.size = 500
         self.current_scroll = 1
@@ -41,19 +44,24 @@ class MainScreen:
         self.offset_x = 0
         self.offset_y = 0
         self.last_pos = pygame.mouse.get_pos()
+        self.settings_surf = None
+
 
 
 
     def main(self):
         self.build_screen = pygame.Surface((self.scroll, self.screen.get_height()))
         self.resizable_menu = pygame.Rect(((self.build_screen.get_width() - 10), 0), (10, self.screen.get_height()))
+        self.settings_surf = pygame.Surface((self.screen.get_width() // 6, self.screen.get_height()//2))
+        self.settings_mask = pygame.mask.from_surface(self.settings_surf)
+        self.settings_outline = [(p[0], p[1]) for p in self.settings_mask.outline(every=1)]
+        self.settings_surf.fill((77, 77, 77))
         maximum_resize = self.screen.get_width() // 2
         minimum_resize = self.screen.get_height() // 4
         self.menu_rect.x = -5
         self.menu_rect.y = (self.screen.get_height() // 2) - self.menu_icon.get_height()//2
 
-        self.settings_rect.x = self.screen.get_width() - self.settings_icon.get_width() - 10
-        self.settings_rect.y = 10
+
 
 
 
@@ -104,10 +112,16 @@ class MainScreen:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if self.resizable_menu.collidepoint(pygame.mouse.get_pos()) and not self.is_close and not self.settings_icon.get_rect().collidepoint(pygame.mouse.get_pos()):
-                        if self.is_dragging == True:
+                        if self.is_dragging:
                             self.is_dragging = False
                         else:
                             self.is_dragging = True
+
+                    elif self.settings_rect.collidepoint(event.pos):
+                        if self.settings:
+                            self.settings = False
+                        else:
+                            self.settings = True
 
                     elif self.is_close and self.menu_rect.collidepoint(pygame.mouse.get_pos()):
                         self.is_close = False
@@ -215,6 +229,8 @@ class MainScreen:
         else:
             pygame.draw.rect(self.build_screen, (255, 255, 255), self.resizable_menu)
 
+
+
         for img in self.maps:
             img.draw(self.screen, (self.offset_x, self.offset_y))
 
@@ -236,8 +252,21 @@ class MainScreen:
             pygame.draw.circle(self.screen, (255, 255, 255), (0, self.screen.get_height() // 2), 65)
             self.screen.blit(self.menu_icon, (-5, (self.screen.get_height() // 2) - self.menu_icon.get_height()//2))
 
+        if self.settings:
+            lines = pygame.draw.lines(self.settings_surf, self.color_outline_settings, False, self.settings_outline, 10)
+
+            if lines.collidepoint(pygame.mouse.get_pos()):
+                print('treue')
+
+            self.screen.blit(self.settings_surf, (self.screen.get_width() - self.settings_surf.get_width(),  self.screen.get_height() - self.settings_surf.get_height()))
+
+
         self.screen.blit(self.settings_icon, (self.screen.get_width() - self.settings_icon.get_width(), self.screen.get_height() - self.settings_icon.get_height()))
-        #pygame.draw.rect(self.screen, (255, 255, 255), self.settings_icon.get_rect())
+
+        self.settings_rect.x, self.settings_rect.y = (self.screen.get_width() - self.settings_icon.get_width(), self.screen.get_height() - self.settings_icon.get_height())
+
+
+
         pygame.display.flip()
 
     def scroll_tile(self, next_index):
@@ -245,7 +274,6 @@ class MainScreen:
         x, y = pygame.mouse.get_pos()
         x = x //tile_size
         y = y //tile_size
-
 
         if next_index == -0.1 and round(self.current_scroll, 1) == 0.2:
             self.current_scroll = 0.2
@@ -260,13 +288,6 @@ class MainScreen:
 
         for img in self.maps:
             img.resize(tile_size)
-
-
-        self.offset_x = x * tile_size - self.screen.get_width() //2
-        self.offset_y = y * tile_size - self.screen.get_height() // 2
-
-
-
 
     def add_block(self):
         try:
@@ -309,9 +330,6 @@ class MainScreen:
         return (-dx, -dy)
 
     def run(self):
-        block = Block(0, 0, Sprite(1584), 32)
-        self.maps.append(block)
-
         while True:
             self.main()
             self.update()
@@ -322,4 +340,3 @@ class MainScreen:
 
 s = MainScreen((500, 500), 'Map Editor')
 s.run()
-
