@@ -1,5 +1,3 @@
-from fileinput import filename
-from tarfile import BLOCKSIZE
 import Block, Sprite, pygame, AnimatedSprite
 
 class Item :
