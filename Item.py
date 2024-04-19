@@ -1,4 +1,4 @@
-import Block, Sprite, pygame, AnimatedSprite
+import Block, Sprite, pygame
 
 class Item :
 
