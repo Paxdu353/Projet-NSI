@@ -48,14 +48,14 @@ class Item :
             block.resize(size)
             block.draw(screen , (0,0))
 
-            if block.crossable:
-                surface = pygame.Surface(block.hitbox.size, pygame.SRCALPHA)
-                pygame.draw.rect(surface, (255,0,0,127), surface.get_rect())
-                screen.blit(surface, block.hitbox)
+            if not block.crossable:
+                color = (255,0,0,50)
             else:
-                surface = pygame.Surface(block.hitbox.size, pygame.SRCALPHA)
-                pygame.draw.rect(surface, (0,255,0,127), surface.get_rect())
-                screen.blit(surface, block.hitbox)
+                color = (0,255,0,50)
+
+            surface = pygame.Surface(block.hitbox.size, pygame.SRCALPHA)
+            pygame.draw.rect(surface, color, surface.get_rect())
+            screen.blit(surface, block.hitbox)
         
         # Dessin des lignes verticales
         for x in range(size, screen.get_width(), size):
