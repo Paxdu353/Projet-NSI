@@ -116,7 +116,7 @@ Création : une liste de sprites animés (de type `AnimatedSprite`), un sprite a
   - `vx`, `vy` : coordonnées du vecteur vitesse de déplacement (utile pour la mise à jour des sprites et le déplacement du personnage)
 - Méthodes non héritées de `Block`:
   - `check_moves()` : méthode à appeler à chaque tour dans la boucle de jeu, vérifiant si un événement est survenu (clic souris, appui sur une touche...) et mettant à jour le sprite du joueur ainsi que sa vitesse.
-  - `move()` : déplace le personnage, en fonction de `vx` et `vy` et des éventuelles collisions qui pourraient survenir. **Cette fonction retourne le scroll associé au joueur.**
+  - `move(blocks)` : déplace le personnage, en fonction de `vx` et `vy` et des éventuelles collisions avec `blocks` qui pourraient survenir. **Cette fonction retourne le scroll associé au joueur.**
 
 Map
 -
