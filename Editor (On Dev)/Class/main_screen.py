@@ -2,7 +2,7 @@ import pygame
 import os
 import SPRITES
 from Block import Block
-from AnimatedSpite import AnimatedSpite
+from AnimatedSprite import AnimatedSprite
 from Sprite import Sprite
 import glob
 pygame.init()
@@ -15,13 +15,7 @@ class MainScreen:
         self.titre = titre
         self.choice = None
         self.screen = pygame.display.set_mode(self.dimensions, pygame.RESIZABLE, pygame.APPACTIVE)
-
-
-
         pygame.display.set_caption(self.titre)
-
-
-
         self.dossier_icon = pygame.image.load("../icon/dossier.png")
         self.back_icon = pygame.image.load("../icon/retour.png")
         self.settings_icon = pygame.image.load("../icon/settings.png")
@@ -47,23 +41,22 @@ class MainScreen:
         self.offset_y = 0
         self.last_pos = pygame.mouse.get_pos()
         self.settings_surf: pygame.Mask = pygame.Mask((0, 0))
-        self.grid_switch = Switch(50, 50, self.on_button_icon, self.off_button_icon, 1, ':GRILLE')
+        self.grid_switch = Switch(50, 50, self.on_button_icon, self.off_button_icon, 1, 'GRILLE')
         self.grid_active = self.grid_switch.current_index
-
-
+        self.build_screen = None
+        self.resizable_menu = None
 
 
     def main(self):
         self.build_screen = pygame.Surface((self.scroll, self.screen.get_height()))
         self.resizable_menu = pygame.Rect(((self.build_screen.get_width() - 10), 0), (10, self.screen.get_height()))
         self.settings_surf = pygame.Surface((self.screen.get_width() // 6, self.screen.get_height()//2))
-        self.settings_mask = pygame.mask.from_surface(self.settings_surf)
-        self.settings_outline = [(p[0], p[1]) for p in self.settings_mask.outline(every=1)]
         self.settings_surf.fill((77, 77, 77))
         maximum_resize = self.screen.get_width() // 2
         minimum_resize = self.screen.get_height() // 4
         self.menu_rect.x = -5
         self.menu_rect.y = (self.screen.get_height() // 2) - self.menu_icon.get_height()//2
+
 
         if self.is_dragging:
             self.is_close = False
@@ -110,10 +103,6 @@ class MainScreen:
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    x_pos, y_pos = pygame.mouse.get_pos()
-                    x_pos -= self.grid_switch.pos[0]
-                    y_pos -= self.grid_switch.pos[1]
-                    self.grid_switch.check_colision(pygame.mouse.get_pos())
                     if self.resizable_menu.collidepoint(pygame.mouse.get_pos()) and not self.is_close and not self.settings_icon.get_rect().collidepoint(pygame.mouse.get_pos()):
                         if self.is_dragging:
                             self.is_dragging = False
@@ -162,6 +151,9 @@ class MainScreen:
                                 if rect_dossier.collidepoint(event.pos):
                                     self.current_folder = path
                                     break
+
+                    elif self.settings:
+                        self.grid_switch.check_colision(event.pos)
 
 
 
@@ -261,22 +253,19 @@ class MainScreen:
             self.screen.blit(self.menu_icon, (-5, (self.screen.get_height() // 2) - self.menu_icon.get_height()//2))
 
         if self.settings:
-            lines = pygame.draw.lines(self.settings_surf, self.color_outline_settings, False, self.settings_outline, 10)
-            co_mask = self.settings_mask.get_size()
-            for x in range(co_mask[0]):
-                for y in range(co_mask[1]):
-                    if self.settings_surf.get_at((x, y)) == pygame.Color(255, 255, 255, 255):
-                        if self.is_draging_settings:
-                            self.settings_surf.set_at((x, y), (0, 255, 0))
-                        else:
-                            self.settings_surf.set_at((x, y), (255, 255, 255))
-
-            self.grid_switch.draw(self.settings_surf)
-
-
+            rect = self.settings_surf.get_rect()
+            rect.x = self.screen.get_width() - self.settings_surf.get_width() - 5
+            rect.y = self.screen.get_height() - self.settings_surf.get_height() - 5
+            pygame.draw.rect(self.screen, (77, 77, 77), rect, border_radius=10)
+            self.grid_switch.draw(self.screen, self.screen.get_width() - self.settings_surf.get_width() + 50, self.screen.get_height() - self.settings_surf.get_height() +50)
+            reset_rect = pygame.rect.Rect(self.screen.get_width() - 275-15, self.screen.get_height() - 50, 75, 30)
+            save_rect = pygame.rect.Rect(self.screen.get_width() - 185-15, self.screen.get_height() - 50, 75, 30)
+            load_rect = pygame.rect.Rect(self.screen.get_width() - 95-15, self.screen.get_height() - 50, 75, 30)
+            pygame.draw.rect(self.screen, (110, 110, 110), reset_rect, border_radius=10)
+            pygame.draw.rect(self.screen, (110, 110, 110), save_rect, border_radius=10)
+            pygame.draw.rect(self.screen, (110, 110, 110), load_rect, border_radius=10)
 
 
-            self.screen.blit(self.settings_surf, (self.screen.get_width() - self.settings_surf.get_width(),  self.screen.get_height() - self.settings_surf.get_height()))
 
 
         self.screen.blit(self.settings_icon, (self.screen.get_width() - self.settings_icon.get_width(), self.screen.get_height() - self.settings_icon.get_height()))
@@ -288,11 +277,6 @@ class MainScreen:
         pygame.display.flip()
 
     def scroll_tile(self, next_index):
-        tile_size = self.scale(self.current_scroll, 64)
-        x, y = pygame.mouse.get_pos()
-        x = x //tile_size
-        y = y //tile_size
-
         if next_index == -0.1 and round(self.current_scroll, 1) == 0.2:
             self.current_scroll = 0.2
 
@@ -303,7 +287,10 @@ class MainScreen:
             self.current_scroll = self.current_scroll + next_index
             self.current_scroll = round(self.current_scroll, 1)
 
-
+        tile_size = self.scale(self.current_scroll, 64)
+        x, y = pygame.mouse.get_pos()
+        x = x // tile_size
+        y = y // tile_size
         for img in self.maps:
             img.resize(tile_size)
 
@@ -371,11 +358,11 @@ class Switch:
         self.current_index = self.default_values
         self.font = pygame.font.SysFont(None, 25)
         self.text = self.font.render(title, True, (255, 255, 255))
-    def draw(self, screen: pygame.Surface):
-        screen.blit(self.values[self.current_index], self.pos)
-        screen.blit(self.text, (self.pos[0] + 64 + 5, (self.pos[1] + 67)/2))
-        self.rect.x = self.pos[0]
-        self.rect.y = self.pos[1]
+    def draw(self, screen: pygame.Surface, x, y):
+        screen.blit(self.values[self.current_index], (x, y))
+        screen.blit(self.text, (x + 64 + 5, y + 10))
+        self.rect.x = x
+        self.rect.y = y
         #pygame.draw.rect(screen, (255, 255, 255), self.rect)
 
     def check_colision(self, position_souris):
