@@ -25,6 +25,8 @@ class MainScreen:
         self.dossier_icon = pygame.image.load("../icon/dossier.png")
         self.back_icon = pygame.image.load("../icon/retour.png")
         self.settings_icon = pygame.image.load("../icon/settings.png")
+        self.on_button_icon = pygame.image.load("../icon/on_button.png")
+        self.off_button_icon = pygame.image.load("../icon/off_button.png")
         self.menu_icon = pygame.transform.rotate(pygame.transform.scale(pygame.image.load("../icon/menu.png").convert_alpha(), (64,64)), -90)
         self.menu_rect = pygame.Rect(self.menu_icon.get_rect())
         self.settings_rect = self.settings_icon.get_rect()
@@ -44,7 +46,9 @@ class MainScreen:
         self.offset_x = 0
         self.offset_y = 0
         self.last_pos = pygame.mouse.get_pos()
-        self.settings_surf = None
+        self.settings_surf: pygame.Mask = pygame.Mask((0, 0))
+        self.grid_switch = Switch(50, 50, self.on_button_icon, self.off_button_icon, 1, ':GRILLE')
+        self.grid_active = self.grid_switch.current_index
 
 
 
@@ -60,11 +64,6 @@ class MainScreen:
         minimum_resize = self.screen.get_height() // 4
         self.menu_rect.x = -5
         self.menu_rect.y = (self.screen.get_height() // 2) - self.menu_icon.get_height()//2
-
-
-
-
-
 
         if self.is_dragging:
             self.is_close = False
@@ -111,11 +110,18 @@ class MainScreen:
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
+                    x_pos, y_pos = pygame.mouse.get_pos()
+                    x_pos -= self.grid_switch.pos[0]
+                    y_pos -= self.grid_switch.pos[1]
+                    self.grid_switch.check_colision(pygame.mouse.get_pos())
                     if self.resizable_menu.collidepoint(pygame.mouse.get_pos()) and not self.is_close and not self.settings_icon.get_rect().collidepoint(pygame.mouse.get_pos()):
                         if self.is_dragging:
                             self.is_dragging = False
                         else:
                             self.is_dragging = True
+
+
+
 
                     elif self.settings_rect.collidepoint(event.pos):
                         if self.settings:
@@ -157,6 +163,8 @@ class MainScreen:
                                     self.current_folder = path
                                     break
 
+
+
                 elif event.button == 2:
                     self.last_pos = pygame.mouse.get_pos()
 
@@ -172,7 +180,7 @@ class MainScreen:
 
 
     def update(self):
-        pass
+        self.grid_active = self.grid_switch.current_index
 
     def draw(self):
         self.screen.fill((144, 144, 144))
@@ -235,15 +243,15 @@ class MainScreen:
             img.draw(self.screen, (self.offset_x, self.offset_y))
 
 
+        if self.grid_active:
+            for line in range(self.size + 1):
+                pygame.draw.line(self.screen, (255, 255, 255),
+                                 (line * tile_size - self.offset_x, 0),
+                                 (line * tile_size - self.offset_x, self.screen.get_height()))
 
-        for line in range(self.size + 1):
-            pygame.draw.line(self.screen, (255, 255, 255),
-                             (line * tile_size - self.offset_x, 0),
-                             (line * tile_size - self.offset_x, self.screen.get_height()))
-
-            pygame.draw.line(self.screen, (255, 255, 255),
-                             (0, line * tile_size - self.offset_y),
-                             (self.screen.get_width(), line * tile_size - self.offset_y))
+                pygame.draw.line(self.screen, (255, 255, 255),
+                                 (0, line * tile_size - self.offset_y),
+                                 (self.screen.get_width(), line * tile_size - self.offset_y))
 
 
 
@@ -254,9 +262,19 @@ class MainScreen:
 
         if self.settings:
             lines = pygame.draw.lines(self.settings_surf, self.color_outline_settings, False, self.settings_outline, 10)
+            co_mask = self.settings_mask.get_size()
+            for x in range(co_mask[0]):
+                for y in range(co_mask[1]):
+                    if self.settings_surf.get_at((x, y)) == pygame.Color(255, 255, 255, 255):
+                        if self.is_draging_settings:
+                            self.settings_surf.set_at((x, y), (0, 255, 0))
+                        else:
+                            self.settings_surf.set_at((x, y), (255, 255, 255))
 
-            if lines.collidepoint(pygame.mouse.get_pos()):
-                print('treue')
+            self.grid_switch.draw(self.settings_surf)
+
+
+
 
             self.screen.blit(self.settings_surf, (self.screen.get_width() - self.settings_surf.get_width(),  self.screen.get_height() - self.settings_surf.get_height()))
 
@@ -329,6 +347,8 @@ class MainScreen:
 
         return (-dx, -dy)
 
+
+
     def run(self):
         while True:
             self.main()
@@ -336,6 +356,36 @@ class MainScreen:
             self.draw()
 
             self.clock.tick(60)
+
+
+class Switch:
+    def __init__(self,x, y, switch1: pygame.Surface, switch2: pygame.Surface, default_values: int, title):
+        self.title = title
+        self.main_images = pygame.transform.scale(switch1, (64, 32))
+        self.rect = self.main_images.get_rect()
+        self.second_images = pygame.transform.scale(switch2, (64, 32))
+        self.pos = (x, y)
+        self.default_values = default_values
+        self.values = {0: self.second_images,
+                  1: self.main_images}
+        self.current_index = self.default_values
+        self.font = pygame.font.SysFont(None, 25)
+        self.text = self.font.render(title, True, (255, 255, 255))
+    def draw(self, screen: pygame.Surface):
+        screen.blit(self.values[self.current_index], self.pos)
+        screen.blit(self.text, (self.pos[0] + 64 + 5, (self.pos[1] + 67)/2))
+        self.rect.x = self.pos[0]
+        self.rect.y = self.pos[1]
+        #pygame.draw.rect(screen, (255, 255, 255), self.rect)
+
+    def check_colision(self, position_souris):
+        if self.rect.collidepoint(position_souris):
+            if self.current_index == 0:
+                self.current_index = 1
+            else:
+                self.current_index = 0
+
+
 
 
 s = MainScreen((500, 500), 'Map Editor')
